@@ -4,7 +4,7 @@ export default function Welcome() {
     return (
         <>
             <Head title="Home" />
-            <div>Hi, this is Home</div>
+            <div className="bg-blue-500">Hi, this is Register</div>
         </>
     );
 }
