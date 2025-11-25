@@ -8,12 +8,8 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./src:/var/www/html
-      - storage-framework:/var/www/html/storage/framework
-      - vendor:/var/www/html/vendor
     ports:
       - "5173:5173"
-    depends_on:
-      - db
 
   nginx:
     build:
@@ -26,31 +22,3 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
-
-  db:
-    image: mysql:8.0
-    container_name: laravel-db
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: laravel
-      MYSQL_USER: laravel
-      MYSQL_PASSWORD: laravel
-    ports:
-      - "3306:3306"
-    volumes:
-      - db-data:/var/lib/mysql
-
-volumes:
-  db-data:
-  storage-framework:
-  vendor:
-
-#開発環境が重いので以下を実行
-#https://qiita.com/koinunopochi/items/8f749b29973a9d46bacc
-#vendorとstorageをホストからコンテナに手動でコピーする。ライブラリを新規で追加する時はこの作業が必要
-#ホスト側で以下を実行
-#docker ps -a
-#appコンテナ(PHPのコンテナ)のIDを確認
-# docker cp ./src/vendor 調べたID:/var/www/html
-# docker cp ./src/storage 知らべたID:/var/www/html
-# ※artisan migrateやchmod -R 777 storage bootstrap/cacheを、appコンテナ内で流す必要あるかも
