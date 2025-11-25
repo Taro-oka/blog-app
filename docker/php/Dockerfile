@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libpq-dev \
-    curl gnupg \
+    curl gnupg nginx \
     && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd \
     && rm -rf /var/lib/apt/lists/*
 
@@ -39,6 +39,7 @@ RUN composer install --no-dev --optimize-autoloader \
 FROM base AS runtime
 
 COPY --from=builder /var/www/html /var/www/html
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Drop Node modules to keep runtime slim (artifacts are already built)
 RUN rm -rf /var/www/html/node_modules
