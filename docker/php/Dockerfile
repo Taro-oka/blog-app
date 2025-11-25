@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y git \
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 # App source
-COPY . .
+COPY ./src/ /var/www/html
 
 # Production installs/builds
 RUN composer install --no-dev --optimize-autoloader \
