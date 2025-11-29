@@ -5,7 +5,8 @@
         "build": "tsc && vite build",
         "dev": "vite",
         "format": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "prepare": "husky"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",
