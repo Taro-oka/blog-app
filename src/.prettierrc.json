@@ -1,0 +1,16 @@
+{
+    "printWidth": 100,
+    "singleQuote": false,
+    "semi": true,
+    "trailingComma": "all",
+    "overrides": [
+        {
+            "files": ["*.php"],
+            "options": {
+                "singleQuote": true,
+                "parser": "php",
+                "plugins": ["@prettier/plugin-php"]
+            }
+        }
+    ]
+}
