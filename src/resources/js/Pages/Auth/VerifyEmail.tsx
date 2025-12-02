@@ -14,27 +14,22 @@ export default function VerifyEmail({ status }: { status?: string }) {
 
     return (
         <GuestLayout>
-            <Head title="Email Verification" />
+            <Head title="メール認証" />
 
             <div className="mb-4 text-sm text-gray-600">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
+                ご登録ありがとうございます！始める前に、送信したメールのリンクを
+                クリックしてメールアドレスを認証してください。届いていない場合は、 再送できます。
             </div>
 
             {status === "verification-link-sent" && (
                 <div className="mb-4 text-sm font-medium text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+                    登録時に入力したメールアドレスに、新しい認証リンクを送信しました。
                 </div>
             )}
 
             <form onSubmit={submit}>
                 <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
-                        Resend Verification Email
-                    </PrimaryButton>
+                    <PrimaryButton disabled={processing}>認証メールを再送する</PrimaryButton>
 
                     <Link
                         href={route("logout")}
@@ -42,7 +37,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                         as="button"
                         className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Log Out
+                        ログアウト
                     </Link>
                 </div>
             </form>
