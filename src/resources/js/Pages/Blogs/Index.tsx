@@ -1,38 +1,18 @@
 import React from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/shared/PrimaryButton";
 import Card from "@/Components/shared/Card";
+import { z } from "zod";
+import { blogSchema, userSchema, type Blog, type PageProps } from "@/types";
 
-interface Blog {
-    id: number;
-    title: string;
-    excerpt: string | null;
-    content: string;
-    slug: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-    published_at: string | null;
-    user: {
-        id: number;
-        name: string;
-        email: string;
-    };
-}
+type IndexPageProps = PageProps<{ blogs: unknown }>;
 
-interface IndexProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-        };
-    };
-    blogs: Blog[];
-}
+export default function Index() {
+    const { props } = usePage<IndexPageProps>();
+    userSchema.parse(props.auth.user);
+    const blogs = z.array(blogSchema).parse(props.blogs);
 
-export default function Index({ auth, blogs }: IndexProps) {
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("ja-JP", {
             year: "numeric",
@@ -45,6 +25,67 @@ export default function Index({ auth, blogs }: IndexProps) {
         if (text.length <= length) return text;
         return text.substring(0, length) + "...";
     };
+
+    const renderBlogCard = (blog: Blog) => (
+        <div
+            key={blog.id}
+            className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow"
+        >
+            <div className="flex items-center justify-between mb-3">
+                <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        blog.status === "published"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                    }`}
+                >
+                    {blog.status === "published" ? "公開" : "下書き"}
+                </span>
+                <time className="text-sm text-gray-500">
+                    {formatDate(blog.created_at)}
+                </time>
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                <Link
+                    href={route("blogs.show", blog.id)}
+                    className="hover:text-indigo-600 transition-colors"
+                >
+                    {blog.title}
+                </Link>
+            </h3>
+
+            {blog.excerpt && (
+                <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                    {blog.excerpt}
+                </p>
+            )}
+
+            {!blog.excerpt && (
+                <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                    {truncateText(blog.content.replace(/<[^>]*>/g, ""))}
+                </p>
+            )}
+
+            <div className="flex items-center justify-between">
+                <div className="text-sm text-gray-500">投稿者: {blog.user.name}</div>
+                <div className="flex space-x-2">
+                    <Link
+                        href={route("blogs.edit", blog.id)}
+                        className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                    >
+                        編集
+                    </Link>
+                    <Link
+                        href={route("blogs.show", blog.id)}
+                        className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+                    >
+                        詳細
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <AuthenticatedLayout
@@ -93,68 +134,7 @@ export default function Index({ auth, blogs }: IndexProps) {
                             </div>
                         ) : (
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                                {blogs.map((blog) => (
-                                    <div
-                                        key={blog.id}
-                                        className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow"
-                                    >
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span
-                                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                    blog.status === "published"
-                                                        ? "bg-green-100 text-green-800"
-                                                        : "bg-yellow-100 text-yellow-800"
-                                                }`}
-                                            >
-                                                {blog.status === "published" ? "公開" : "下書き"}
-                                            </span>
-                                            <time className="text-sm text-gray-500">
-                                                {formatDate(blog.created_at)}
-                                            </time>
-                                        </div>
-
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                                            <Link
-                                                href={route("blogs.show", blog.id)}
-                                                className="hover:text-indigo-600 transition-colors"
-                                            >
-                                                {blog.title}
-                                            </Link>
-                                        </h3>
-
-                                        {blog.excerpt && (
-                                            <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                                                {blog.excerpt}
-                                            </p>
-                                        )}
-
-                                        {!blog.excerpt && (
-                                            <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                                                {truncateText(blog.content.replace(/<[^>]*>/g, ""))}
-                                            </p>
-                                        )}
-
-                                        <div className="flex items-center justify-between">
-                                            <div className="text-sm text-gray-500">
-                                                投稿者: {blog.user.name}
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <Link
-                                                    href={route("blogs.edit", blog.id)}
-                                                    className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
-                                                >
-                                                    編集
-                                                </Link>
-                                                <Link
-                                                    href={route("blogs.show", blog.id)}
-                                                    className="text-gray-600 hover:text-gray-900 text-sm font-medium"
-                                                >
-                                                    詳細
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                {blogs.map((blog) => renderBlogCard(blog))}
                             </div>
                         )}
                     </Card>

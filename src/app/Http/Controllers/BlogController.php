@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BlogResource;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +17,7 @@ class BlogController extends Controller
     {
         $blogs = Blog::with('user')->orderBy('created_at', 'desc')->get();
         return Inertia::render('Blogs/Index', [
-            'blogs' => $blogs
+            'blogs' => BlogResource::collection($blogs)
         ]);
     }
 
@@ -69,7 +70,7 @@ class BlogController extends Controller
     {
         $blog = Blog::with('user')->findOrFail($id);
         return Inertia::render('Blogs/Show', [
-            'blog' => $blog
+            'blog' => BlogResource::make($blog)
         ]);
     }
 
@@ -78,9 +79,9 @@ class BlogController extends Controller
      */
     public function edit(string $id)
     {
-        $blog = Blog::findOrFail($id);
+        $blog = Blog::with('user')->findOrFail($id);
         return Inertia::render('Blogs/Edit', [
-            'blog' => $blog
+            'blog' => BlogResource::make($blog)
         ]);
     }
 
@@ -113,7 +114,9 @@ class BlogController extends Controller
             'slug' => $slug,
             'excerpt' => $validated['excerpt'],
             'status' => $validated['status'] ?? 'draft',
-            'published_at' => ($validated['status'] ?? 'draft') === 'published' && !$blog->published_at ? now() : $blog->published_at,
+            'published_at' => ($validated['status'] ?? 'draft') === 'published' && !$blog->published_at
+                ? now()
+                : $blog->published_at,
         ]);
 
         return redirect()->route('blogs.index')->with('success', 'ブログ記事が更新されました。');
