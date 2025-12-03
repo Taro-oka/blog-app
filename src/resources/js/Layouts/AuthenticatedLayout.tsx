@@ -127,7 +127,13 @@ export default function Authenticated({
                             href={route("dashboard")}
                             active={route().current("dashboard")}
                         >
-                            Dashboard
+                            ダッシュボード
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route("blogs.index")}
+                            active={route().current("blogs.index")}
+                        >
+                            ブログ
                         </ResponsiveNavLink>
                     </div>
 
@@ -139,10 +145,10 @@ export default function Authenticated({
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route("profile.edit")}>
-                                Profile
+                                プロフィール
                             </ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route("logout")} as="button">
-                                Log Out
+                                ログアウト
                             </ResponsiveNavLink>
                         </div>
                     </div>
