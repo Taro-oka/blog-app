@@ -1,5 +1,5 @@
 import React from "react";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/shared/PrimaryButton";
 import SecondaryButton from "@/Components/shared/SecondaryButton";
@@ -7,24 +7,21 @@ import InputLabel from "@/Components/shared/InputLabel";
 import TextInput from "@/Components/shared/TextInput";
 import InputError from "@/Components/shared/InputError";
 import Card from "@/Components/shared/Card";
+import { blogStatusSchema, userSchema, type BlogForm, type PageProps } from "@/types";
 
-interface CreateProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-        };
-    };
-}
+type CreatePageProps = PageProps;
 
-export default function Create({ auth }: CreateProps) {
-    const { data, setData, post, processing, errors } = useForm({
+export default function Create() {
+    const { props } = usePage<CreatePageProps>();
+    const defaultStatus = blogStatusSchema.enum.draft;
+
+    const { data, setData, post, processing, errors } = useForm<BlogForm>({
         title: "",
         content: "",
         excerpt: "",
-        status: "draft" as "draft" | "published",
+        status: defaultStatus,
     });
+    userSchema.parse(props.auth.user);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -95,9 +92,7 @@ export default function Create({ auth }: CreateProps) {
                                     id="status"
                                     name="status"
                                     value={data.status}
-                                    onChange={(e) =>
-                                        setData("status", e.target.value as "draft" | "published")
-                                    }
+                                    onChange={(e) => setData("status", e.target.value as BlogForm["status"])}
                                     className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 >
                                     <option value="draft">下書き</option>

@@ -1,38 +1,17 @@
 import React from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import SecondaryButton from "@/Components/shared/SecondaryButton";
 import Card from "@/Components/shared/Card";
+import { blogSchema, userSchema, type Blog, type PageProps } from "@/types";
 
-interface Blog {
-    id: number;
-    title: string;
-    excerpt: string | null;
-    content: string;
-    slug: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-    published_at: string | null;
-    user: {
-        id: number;
-        name: string;
-        email: string;
-    };
-}
+type ShowPageProps = PageProps<{ blog: unknown }>;
 
-interface ShowProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-        };
-    };
-    blog: Blog;
-}
+export default function Show() {
+    const { props } = usePage<ShowPageProps>();
+    const authUser = userSchema.parse(props.auth.user);
+    const blog = blogSchema.parse(props.blog);
 
-export default function Show({ auth, blog }: ShowProps) {
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("ja-JP", {
             year: "numeric",
@@ -42,6 +21,8 @@ export default function Show({ auth, blog }: ShowProps) {
             minute: "2-digit",
         });
     };
+
+    const canEdit = (currentUserId: string, post: Blog) => currentUserId === post.user.id;
 
     return (
         <AuthenticatedLayout
@@ -54,7 +35,7 @@ export default function Show({ auth, blog }: ShowProps) {
                         <Link href={route("blogs.index")}>
                             <SecondaryButton>一覧に戻る</SecondaryButton>
                         </Link>
-                        {auth.user.id === blog.user.id && (
+                        {canEdit(authUser.id, blog) && (
                             <Link href={route("blogs.edit", blog.id)}>
                                 <SecondaryButton>編集</SecondaryButton>
                             </Link>
@@ -144,7 +125,7 @@ export default function Show({ auth, blog }: ShowProps) {
                                     <Link href={route("blogs.index")}>
                                         <SecondaryButton>一覧に戻る</SecondaryButton>
                                     </Link>
-                                    {auth.user.id === blog.user.id && (
+                                    {canEdit(authUser.id, blog) && (
                                         <Link href={route("blogs.edit", blog.id)}>
                                             <SecondaryButton>編集</SecondaryButton>
                                         </Link>
