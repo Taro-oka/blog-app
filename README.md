@@ -39,3 +39,18 @@ npm run dev
 
 - Storage directories are not synced between the container and the host, so create them manually on the first run to avoid errors.
 - The database is configured to connect to Supabase; ensure credentials are available in the environment.
+
+## Testing(backend)
+
+```bash
+1. docker compose up -d
+2. docker exec -it laravel-app bash
+3. npm run dev
+4. php artisan test //use another terminal
+```
+
+## Testing(frontend)
+
+```bash
+// To be added here
+```

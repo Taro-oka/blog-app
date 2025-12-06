@@ -3,22 +3,23 @@ import InputLabel from "@/Components/shared/InputLabel";
 import PrimaryButton from "@/Components/shared/PrimaryButton";
 import TextInput from "@/Components/shared/TextInput";
 import { Transition } from "@headlessui/react";
-import { Link, useForm, usePage } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
+import { type ProfileForm, type User } from "@/types";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = "",
+    user,
 }: {
     mustVerifyEmail: boolean;
     status?: string;
     className?: string;
+    user: User;
 }) {
-    const user = usePage().props.auth.user;
-
     const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
+        useForm<ProfileForm>({
             name: user.name,
             email: user.email,
         });
@@ -32,18 +33,16 @@ export default function UpdateProfileInformation({
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
+                <h2 className="text-lg font-medium text-gray-900">プロフィール情報</h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Update your account's profile information and email address.
+                    アカウントのプロフィール情報とメールアドレスを更新してください。
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="name" value="名前" />
 
                     <TextInput
                         id="name"
@@ -59,7 +58,7 @@ export default function UpdateProfileInformation({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="メールアドレス" />
 
                     <TextInput
                         id="email"
@@ -77,28 +76,27 @@ export default function UpdateProfileInformation({
                 {mustVerifyEmail && user.email_verified_at === null && (
                     <div>
                         <p className="mt-2 text-sm text-gray-800">
-                            Your email address is unverified.
+                            メールアドレスは未認証です。
                             <Link
                                 href={route("verification.send")}
                                 method="post"
                                 as="button"
                                 className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                Click here to re-send the verification email.
+                                こちらをクリックして認証メールを再送してください。
                             </Link>
                         </p>
 
                         {status === "verification-link-sent" && (
                             <div className="mt-2 text-sm font-medium text-green-600">
-                                A new verification link has been sent to your
-                                email address.
+                                新しい認証リンクをメールアドレス宛に送信しました。
                             </div>
                         )}
                     </div>
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>保存</PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -107,7 +105,7 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">Saved.</p>
+                        <p className="text-sm text-gray-600">保存しました。</p>
                     </Transition>
                 </div>
             </form>
