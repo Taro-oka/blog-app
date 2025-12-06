@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Head, useForm, router } from "@inertiajs/react";
+import { Head, useForm, router, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/shared/PrimaryButton";
 import SecondaryButton from "@/Components/shared/SecondaryButton";
@@ -9,43 +9,22 @@ import TextInput from "@/Components/shared/TextInput";
 import InputError from "@/Components/shared/InputError";
 import Modal from "@/Components/shared/Modal";
 import Card from "@/Components/shared/Card";
+import { blogSchema, userSchema, type BlogForm, type PageProps } from "@/types";
 
-interface Blog {
-    id: number;
-    title: string;
-    excerpt: string | null;
-    content: string;
-    slug: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-    published_at: string | null;
-    user: {
-        id: number;
-        name: string;
-        email: string;
-    };
-}
+type EditPageProps = PageProps<{ blog: unknown }>;
 
-interface EditProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-        };
-    };
-    blog: Blog;
-}
+export default function Edit() {
+    const { props } = usePage<EditPageProps>();
+    userSchema.parse(props.auth.user);
+    const blog = blogSchema.parse(props.blog);
 
-export default function Edit({ auth, blog }: EditProps) {
     const [confirmingDeletion, setConfirmingDeletion] = useState(false);
 
-    const { data, setData, patch, processing, errors } = useForm({
+    const { data, setData, patch, processing, errors } = useForm<BlogForm>({
         title: blog.title,
         content: blog.content,
-        excerpt: blog.excerpt || "",
-        status: blog.status as "draft" | "published",
+        excerpt: blog.excerpt ?? "",
+        status: blog.status,
     });
 
     const submit = (e: React.FormEvent) => {
@@ -125,9 +104,7 @@ export default function Edit({ auth, blog }: EditProps) {
                                     id="status"
                                     name="status"
                                     value={data.status}
-                                    onChange={(e) =>
-                                        setData("status", e.target.value as "draft" | "published")
-                                    }
+                                    onChange={(e) => setData("status", e.target.value as BlogForm["status"])}
                                     className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 >
                                     <option value="draft">下書き</option>
