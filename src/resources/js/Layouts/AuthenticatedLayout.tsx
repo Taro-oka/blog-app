@@ -31,8 +31,8 @@ export default function Authenticated({
                 <NavLink href={route("dashboard")} active={route().current("dashboard")}>
                   ダッシュボード
                 </NavLink>
-                <NavLink href={route("blogs.index")} active={route().current("blogs.index")}>
-                  ブログ
+                <NavLink href={route("posts.index")} active={route().current("posts.*")}>
+                  記事
                 </NavLink>
               </div>
             </div>
@@ -105,8 +105,8 @@ export default function Authenticated({
             <ResponsiveNavLink href={route("dashboard")} active={route().current("dashboard")}>
               ダッシュボード
             </ResponsiveNavLink>
-            <ResponsiveNavLink href={route("blogs.index")} active={route().current("blogs.index")}>
-              ブログ
+            <ResponsiveNavLink href={route("posts.index")} active={route().current("posts.*")}>
+              記事
             </ResponsiveNavLink>
           </div>
 
