@@ -5,8 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @mixin \App\Models\Blog */
-class BlogResource extends JsonResource
+/** @mixin \App\Models\Post */
+class PostResource extends JsonResource
 {
   /**
    * Transform the resource into an array.
@@ -19,7 +19,6 @@ class BlogResource extends JsonResource
       'id' => $this->id,
       'title' => $this->title,
       'content' => $this->content,
-      'slug' => $this->slug,
       'excerpt' => $this->excerpt,
       'status' => $this->status,
       'user_id' => (string) $this->user_id,
