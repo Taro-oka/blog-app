@@ -1,16 +1,45 @@
-import { SVGAttributes } from "react";
+import { SVGAttributes, useLayoutEffect, useRef, useState } from "react";
 
 type ApplicationLogoProps = SVGAttributes<SVGElement> & {
   /** Tailwind size class (e.g. "w-32 h-32") */
-  sizeClass?: string;
+  size?: number;
 };
 
-export default function ApplicationLogo({
-  sizeClass = "w-24 h-24",
-  ...svgProps
-}: ApplicationLogoProps) {
+export default function ApplicationLogo({ size = 24, ...svgProps }: ApplicationLogoProps) {
+  const textRef = useRef<SVGTextElement | null>(null);
+  const viewBoxSize = 1200;
+  const iconSize = 320;
+  const gap = 40;
+
+  const [layout, setLayout] = useState(() => {
+    const defaultTextWidth = 656;
+    const defaultTextHeight = 200;
+    const totalWidth = defaultTextWidth + gap + iconSize;
+    const startX = (viewBoxSize - totalWidth) / 2;
+    const centerY = viewBoxSize / 2;
+    const headerY = centerY - defaultTextHeight / 2;
+    const iconX = startX + defaultTextWidth + gap;
+    const iconY = centerY - iconSize / 2;
+
+    return { startX, headerY, iconX, iconY };
+  });
+
+  useLayoutEffect(() => {
+    const box = textRef.current?.getBBox();
+    if (!box || !box.width || !box.height) return;
+
+    const totalWidth = box.width + gap + iconSize;
+    const startX = (viewBoxSize - totalWidth) / 2 - box.x;
+    const centerY = viewBoxSize / 2;
+    const headerY = centerY - box.height / 2 - box.y;
+    const iconX = startX + box.x + box.width + gap;
+    const iconY = centerY - iconSize / 2;
+
+    setLayout({ startX, headerY, iconX, iconY });
+  }, []);
+
   return (
-    <div className={`${sizeClass}`}>
+    <div className={`w-${size} h-${size}`}>
       <div className="w-full h-full overflow-hidden rounded-full ">
         <svg {...svgProps} viewBox="0 0 1200 1200" version="1.1">
           <g id="root" stroke="none" fill="none" stroke-width="1" fill-rule="evenodd">
@@ -22,10 +51,11 @@ export default function ApplicationLogo({
               height="1200"
               fill="#e4c2ff"
             ></rect>
-            <g id="group-header" transform="translate(160, 530)">
+            <g id="group-header" transform={`translate(${layout.startX}, ${layout.headerY})`}>
               <rect id="rectangle-header" x="0" y="0" width="656" height="200"></rect>
               <text
                 id="headerText.secondary"
+                ref={textRef}
                 font-size="180"
                 data-text-alignment="R"
                 fill="#d23daf"
@@ -46,10 +76,10 @@ export default function ApplicationLogo({
               version="1.1"
               fill="#392F3D"
               id="icon.primary"
-              x="780"
-              y="440"
-              width="320"
-              height="320"
+              x={layout.iconX}
+              y={layout.iconY}
+              width={iconSize}
+              height={iconSize}
             >
               <g id="surface1" fill="#392F3D">
                 <path
