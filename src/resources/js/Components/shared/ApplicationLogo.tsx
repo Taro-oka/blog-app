@@ -42,7 +42,7 @@ export default function ApplicationLogo({ size = 24, ...svgProps }: ApplicationL
     <div className={`w-${size} h-${size}`}>
       <div className="w-full h-full overflow-hidden rounded-full ">
         <svg {...svgProps} viewBox="0 0 1200 1200" version="1.1">
-          <g id="root" stroke="none" fill="none" stroke-width="1" fill-rule="evenodd">
+          <g id="root" stroke="none" fill="none" strokeWidth="1" fillRule="evenodd">
             <rect
               id="background.accent"
               x="0"
@@ -56,13 +56,13 @@ export default function ApplicationLogo({ size = 24, ...svgProps }: ApplicationL
               <text
                 id="headerText.secondary"
                 ref={textRef}
-                font-size="180"
+                fontSize="180"
                 data-text-alignment="R"
                 fill="#d23daf"
-                font-family="Antic Didone"
-                font-weight="500"
-                font-style="normal"
-                letter-spacing="0"
+                fontFamily="Antic Didone"
+                fontWeight="500"
+                fontStyle="normal"
+                letterSpacing="0"
               >
                 <tspan y="141" x="0.03369140625">
                   Devlog
