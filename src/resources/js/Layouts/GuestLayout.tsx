@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 export default function Guest({ children }: PropsWithChildren) {
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0">
-      <div>
+      <div className="w-32">
         <Link href="/">
           <ApplicationLogo className="fill-current text-gray-500" />
         </Link>
