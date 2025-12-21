@@ -52,5 +52,7 @@ npm run dev
 ## Testing(frontend)
 
 ```bash
-// To be added here
+1. docker compose up -d
+2. docker exec -it laravel-app bash
+3. npm run test
 ```
