@@ -39,8 +39,12 @@ RUN composer install --no-dev --optimize-autoloader \
 FROM base AS runtime
 
 COPY --from=builder /var/www/html /var/www/html
+
+# Remove distro default site so our vhost is always used
+RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.default 2>/dev/null || true \
+ && rm -rf /usr/share/nginx/html
+
 COPY docker/prod/nginx/default.conf /etc/nginx/conf.d/default.conf
-RUN rm -f /etc/nginx/sites-enabled/default /etc/nginx/conf.d/default.conf.default 2>/dev/null || true
 
 # Drop Node modules to keep runtime slim (artifacts are already built)
 RUN rm -rf /var/www/html/node_modules
