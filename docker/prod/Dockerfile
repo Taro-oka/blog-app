@@ -17,6 +17,10 @@ WORKDIR /var/www/html
 # Build stage: install dependencies, build assets, warm caches, fix perms
 FROM base AS builder
 
+# App/Vite envs (build-time). VITE_APP_NAME falls back to APP_NAME.
+ARG APP_NAME=Devlog
+ARG VITE_APP_NAME
+
 # Node.js for frontend build and git for composer installs
 RUN apt-get update && apt-get install -y git \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -29,10 +33,14 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # App source
 COPY ./src/ /var/www/html
 
+# Ensure env vars are available to the build steps
+ENV APP_NAME=${APP_NAME}
+ENV VITE_APP_NAME=${VITE_APP_NAME:-${APP_NAME}}
+
 # Production installs/builds
 RUN composer install --no-dev --optimize-autoloader \
  && npm ci \
- && npm run build \
+ && VITE_APP_NAME=$VITE_APP_NAME npm run build \
  && chmod -R 775 storage bootstrap/cache
 
 # Runtime stage: lean image with built artifacts
