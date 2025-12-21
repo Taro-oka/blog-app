@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import SecondaryButton from "@/Components/shared/SecondaryButton";
 import Card from "@/Components/shared/Card";
 import { postSchema, userSchema, type Post, type PageProps } from "@/types";
+import { formatDateTime } from "@/utils/date";
 
 type ShowPageProps = PageProps<{ post: unknown }>;
 
@@ -11,16 +12,6 @@ export default function Show() {
   const { props } = usePage<ShowPageProps>();
   const authUser = userSchema.parse(props.auth.user);
   const post = postSchema.parse(props.post);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
 
   const canEdit = (currentUserId: string, resource: Post) => currentUserId === resource.user.id;
 
@@ -59,7 +50,9 @@ export default function Show() {
                 >
                   {post.status === "published" ? "公開済み" : "下書き"}
                 </span>
-                <time className="text-sm text-gray-500">作成日: {formatDate(post.created_at)}</time>
+                <time className="text-sm text-gray-500">
+                  作成日: {formatDateTime(post.created_at)}
+                </time>
               </div>
 
               <h1 className="text-3xl font-bold text-gray-900 mb-4">{post.title}</h1>
@@ -80,13 +73,13 @@ export default function Show() {
                 {post.published_at && (
                   <>
                     <span className="mx-2">•</span>
-                    公開日: {formatDate(post.published_at)}
+                    公開日: {formatDateTime(post.published_at)}
                   </>
                 )}
                 {post.updated_at !== post.created_at && (
                   <>
                     <span className="mx-2">•</span>
-                    更新日: {formatDate(post.updated_at)}
+                    更新日: {formatDateTime(post.updated_at)}
                   </>
                 )}
               </div>

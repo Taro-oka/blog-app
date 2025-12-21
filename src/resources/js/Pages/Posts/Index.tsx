@@ -5,6 +5,7 @@ import PrimaryButton from "@/Components/shared/PrimaryButton";
 import Card from "@/Components/shared/Card";
 import { z } from "zod";
 import { postSchema, userSchema, type Post, type PageProps } from "@/types";
+import { formatDate } from "@/utils/date";
 
 type IndexPageProps = PageProps<{ posts: unknown }>;
 
@@ -12,14 +13,6 @@ export default function Index() {
   const { props } = usePage<IndexPageProps>();
   userSchema.parse(props.auth.user);
   const posts = z.array(postSchema).parse(props.posts);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const truncateText = (text: string, length: number = 100) => {
     if (text.length <= length) return text;
