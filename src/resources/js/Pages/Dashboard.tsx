@@ -124,7 +124,7 @@ export default function Dashboard() {
                   className="rounded-lg border border-gray-100 bg-gray-50 p-4 shadow-sm"
                 >
                   <p className="text-sm text-gray-500">{item.label}</p>
-                  <p className={`mt-2 text-3xl font-bold ${item.accent}`}>{item.value}</p>
+                  <p className={`mt-2 p-1 text-3xl font-bold ${item.accent}`}>{item.value}</p>
                 </div>
               ))}
             </div>
