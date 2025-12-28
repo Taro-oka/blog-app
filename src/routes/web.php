@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
-use App\Http\Resources\PostResource;
-use App\Models\Post;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,23 +17,8 @@ Route::get('/welcome', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+  Route::get('/', DashboardController::class)->name('dashboard');
   Route::resource('posts', PostController::class);
-  Route::get('/', function () {
-    $stats = [
-      'totalPosts' => Post::count(),
-      'publishedPosts' => Post::where('status', 'published')->count(),
-      'draftPosts' => Post::where('status', 'draft')->count(),
-    ];
-
-    $recentPosts = PostResource::collection(
-      Post::with('user')->latest('created_at')->take(5)->get(),
-    )->resolve();
-
-    return Inertia::render('Dashboard', [
-      'stats' => $stats,
-      'recentPosts' => $recentPosts,
-    ]);
-  })->name('dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {
