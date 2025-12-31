@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,10 +17,8 @@ Route::get('/welcome', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+  Route::get('/', DashboardController::class)->name('dashboard');
   Route::resource('posts', PostController::class);
-  Route::get('/', function () {
-    return Inertia::render('Dashboard');
-  })->name('dashboard');
 });
 
 Route::middleware(['auth'])->group(function () {
