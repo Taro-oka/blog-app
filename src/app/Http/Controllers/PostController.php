@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\StorePostRequest;
+use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PostController extends Controller
@@ -31,25 +32,17 @@ class PostController extends Controller
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(StorePostRequest $request)
   {
-    $validated = $request->validate([
-      'title' => 'required|string|max:255',
-      'content' => 'required|string',
-      'excerpt' => 'nullable|string|max:500',
-      'status' => 'in:draft,published',
-    ]);
-
-    $status = $validated['status'] ?? 'draft';
-    $excerpt = blank($validated['excerpt'] ?? null) ? null : $validated['excerpt'];
+    $validated = $request->validated();
 
     $post = Post::create([
       'title' => $validated['title'],
       'content' => $validated['content'],
-      'excerpt' => $excerpt,
-      'status' => $status,
+      'excerpt' => $validated['excerpt'],
+      'status' => $validated['status'],
       'user_id' => auth()->id(),
-      'published_at' => $status === 'published' ? now() : null,
+      'published_at' => $validated['status'] === 'published' ? now() : null,
     ]);
 
     return redirect()->route('posts.index')->with('success', '記事が作成されました。');
@@ -80,26 +73,18 @@ class PostController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, string $id)
+  public function update(UpdatePostRequest $request, string $id)
   {
     $post = Post::findOrFail($id);
 
-    $validated = $request->validate([
-      'title' => 'required|string|max:255',
-      'content' => 'required|string',
-      'excerpt' => 'nullable|string|max:500',
-      'status' => 'in:draft,published',
-    ]);
-
-    $status = $validated['status'] ?? 'draft';
-    $excerpt = blank($validated['excerpt'] ?? null) ? null : $validated['excerpt'];
+    $validated = $request->validated();
 
     $post->update([
       'title' => $validated['title'],
       'content' => $validated['content'],
-      'excerpt' => $excerpt,
-      'status' => $status,
-      'published_at' => $status === 'published' ? $post->published_at ?? now() : null,
+      'excerpt' => $validated['excerpt'],
+      'status' => $validated['status'],
+      'published_at' => $validated['status'] === 'published' ? $post->published_at ?? now() : null,
     ]);
 
     return redirect()->route('posts.index')->with('success', '記事が更新されました。');
